@@ -1,34 +1,62 @@
 package elias.portalcoordmod;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-public class PortalCoordMod {
-    public static void registerCommands() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
-            dispatcher.register(CommandManager.literal("netherportal")
-                    .then(CommandManager.literal("overworld")
-                            .executes(context -> executeNetherPortalCommand(
-                                    context.getSource(),
-                                    (int) context.getSource().getPosition().getX(),
-                                    (int) context.getSource().getPosition().getY(),
-                                    (int) context.getSource().getPosition().getZ(),
-                                    true
-                            ))
-                            .then(CommandManager.argument("x", IntegerArgumentType.integer())
-                                    .then(CommandManager.argument("y", IntegerArgumentType.integer())
-                                            .then(CommandManager.argument("z", IntegerArgumentType.integer())
+public class PortalCoordMod implements ClientModInitializer {
+    @Override
+    public void onInitializeClient() {
+        registerCommands();
+    }
+
+    static void registerCommands() {
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+            dispatcher.register(ClientCommandManager.literal("netherportal")
+                    .then(ClientCommandManager.literal("help")
+                            .executes(context -> {
+                                sendHelpMessage(context.getSource());
+                                return 1;
+                            }))
+                    .then(ClientCommandManager.literal("overworld")
+                            .then(ClientCommandManager.argument("x", IntegerArgumentType.integer(0))
+                                    .then(ClientCommandManager.argument("y", IntegerArgumentType.integer())
+                                            .then(ClientCommandManager.argument("z", IntegerArgumentType.integer())
                                                     .executes(context -> executeNetherPortalCommand(
                                                             context.getSource(),
                                                             IntegerArgumentType.getInteger(context, "x"),
                                                             IntegerArgumentType.getInteger(context, "y"),
                                                             IntegerArgumentType.getInteger(context, "z"),
                                                             true
-                                                    ))))))
+                                                    ))
+                                            )
+                                    )
+                                    .executes(context -> executeNetherPortalCommand(
+                                            context.getSource(),
+                                            (int) context.getSource().getPosition().getX(),
+                                            (int) context.getSource().getPosition().getY(),
+                                            (int) context.getSource().getPosition().getZ(),
+                                            true
+                                    ))
+                            )
+                    )
+                    .then(ClientCommandManager.argument("x", IntegerArgumentType.integer(0))
+                            .then(ClientCommandManager.argument("y", IntegerArgumentType.integer())
+                                    .then(ClientCommandManager.argument("z", IntegerArgumentType.integer())
+                                            .executes(context -> executeNetherPortalCommand(
+                                                    context.getSource(),
+                                                    IntegerArgumentType.getInteger(context, "x"),
+                                                    IntegerArgumentType.getInteger(context, "y"),
+                                                    IntegerArgumentType.getInteger(context, "z"),
+                                                    false
+                                            ))
+                                    )
+                            )
+                    )
                     .executes(context -> executeNetherPortalCommand(
                             context.getSource(),
                             (int) context.getSource().getPosition().getX(),
@@ -36,15 +64,11 @@ public class PortalCoordMod {
                             (int) context.getSource().getPosition().getZ(),
                             false
                     ))
-                    .then(CommandManager.literal("help")
-                            .executes(context -> {
-                                sendHelpMessage(context.getSource());
-                                return 1;
-                            })));
+            );
         });
     }
 
-    private static void sendHelpMessage(ServerCommandSource source) {
+    private static void sendHelpMessage(FabricClientCommandSource source) {
         // Create a help message
         Text helpMessage = Text.literal("")
                 .append(Text.literal("Nether Portal Coords v0.0.1\n").formatted(Formatting.BOLD, Formatting.RED))
@@ -52,10 +76,16 @@ public class PortalCoordMod {
                 .append(Text.literal("Calculates Nether coordinates using player position.\n").formatted(Formatting.AQUA))
                 .append(Text.literal("-------------------------\n").formatted(Formatting.GRAY))
                 .append(Text.literal("/netherportal ").formatted(Formatting.GOLD))
-                .append(Text.literal("[").formatted(Formatting.GREEN))
-                .append(Text.literal("overworld").formatted(Formatting.GREEN))
-                .append(Text.literal("] ").formatted(Formatting.GREEN))
-                .append(Text.literal("Calculates overworld coordinates using player position.\n").formatted(Formatting.AQUA))
+                .append(Text.literal("[").formatted(Formatting.BLUE))
+                .append(Text.literal("x").formatted(Formatting.BLUE))
+                .append(Text.literal("] ").formatted(Formatting.BLUE))
+                .append(Text.literal("[").formatted(Formatting.BLUE))
+                .append(Text.literal("y").formatted(Formatting.BLUE))
+                .append(Text.literal("] ").formatted(Formatting.BLUE))
+                .append(Text.literal("[").formatted(Formatting.BLUE))
+                .append(Text.literal("z").formatted(Formatting.BLUE))
+                .append(Text.literal("] ").formatted(Formatting.BLUE))
+                .append(Text.literal("Calculates Nether coordinates using custom coordinates.\n").formatted(Formatting.AQUA))
                 .append(Text.literal("-------------------------\n").formatted(Formatting.GRAY))
                 .append(Text.literal("/netherportal ").formatted(Formatting.GOLD))
                 .append(Text.literal("[").formatted(Formatting.GREEN))
@@ -70,23 +100,16 @@ public class PortalCoordMod {
                 .append(Text.literal("[").formatted(Formatting.BLUE))
                 .append(Text.literal("z").formatted(Formatting.BLUE))
                 .append(Text.literal("] ").formatted(Formatting.BLUE))
-                .append(Text.literal("Calculates Nether or Overworld coordinates using custom coordinates.\n").formatted(Formatting.AQUA))
+                .append(Text.literal("Calculates Overworld coordinates using custom coordinates.\n").formatted(Formatting.AQUA))
                 .append(Text.literal("-------------------------\n").formatted(Formatting.GRAY))
                 .append(Text.literal("/netherportal help ").formatted(Formatting.GOLD))
                 .append(Text.literal("Shows this help message.\n").formatted(Formatting.AQUA));
 
-        source.sendFeedback(() -> helpMessage, false);
+        source.sendFeedback(helpMessage);
     }
 
-    private static int executeNetherPortalCommand(ServerCommandSource source, int x, int y, int z, boolean toOverworld) {
+    private static int executeNetherPortalCommand(FabricClientCommandSource source, int x, int y, int z, boolean toOverworld) {
         if (toOverworld) {
-            // If x, y, and z coordinates are not provided, use the player's current position
-            if (x == 0 && y == 0 && z == 0) {
-                x = (int) source.getPosition().getX();
-                y = (int) source.getPosition().getY();
-                z = (int) source.getPosition().getZ();
-            }
-
             // Calculate Overworld coordinates
             int overworldX = x * 8;
             int overworldY = y;
@@ -97,7 +120,7 @@ public class PortalCoordMod {
                     .append(Text.literal(String.format("%d, %d, %d", overworldX, overworldY, overworldZ)).formatted(Formatting.GREEN));
 
             // Send the message to the player
-            source.sendFeedback(() -> message, false);
+            source.sendFeedback(message);
         } else {
             // Calculate Nether coordinates
             int netherX = x / 8;
@@ -109,7 +132,7 @@ public class PortalCoordMod {
                     .append(Text.literal(String.format("%d, %d, %d", netherX, netherY, netherZ)).formatted(Formatting.GREEN));
 
             // Send the message to the player
-            source.sendFeedback(() -> message, false);
+            source.sendFeedback(message);
         }
 
         return 1;

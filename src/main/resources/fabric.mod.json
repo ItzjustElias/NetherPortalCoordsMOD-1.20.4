@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"id": "portal-mod",
+	"id": "nether-portal-coords",
 	"version": "${version}",
 	"name": "Nether Portal Coords",
-	"description": "Discover the secrets of the Nether with NetherPortal Coords!\n Easily calculate Nether and Overworld coordinates for your Minecraft adventures. Seamlessly navigate between dimensions and explore new realms.",
+	"description": "Discover the secrets of the Nether with NetherPortal Coords!\nEasily calculate Nether and Overworld coordinates for your Minecraft adventures. Seamlessly navigate between dimensions and explore new realms.",
 	"authors": [
 		"Elias"
 	],
