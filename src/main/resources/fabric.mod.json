@@ -3,13 +3,13 @@
 	"id": "portal-mod",
 	"version": "${version}",
 	"name": "Nether Portal Coords",
-	"description": "Discover the secrets of the Nether with NetherPortal Coords! Easily calculate Nether and Overworld coordinates for your Minecraft adventures. Seamlessly navigate between dimensions and explore new realms.",
+	"description": "Discover the secrets of the Nether with NetherPortal Coords!\n Easily calculate Nether and Overworld coordinates for your Minecraft adventures. Seamlessly navigate between dimensions and explore new realms.",
 	"authors": [
 		"Elias"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/ItzjustElias/NetherPortalCoordsMOD-1.20.4"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/portal-mod/icon.png",
