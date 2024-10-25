@@ -10,7 +10,7 @@ The Nether Portal Coord Mod is a useful tool for Minecraft players who frequentl
 - Saves Time: Say goodbye to manual calculations or guesswork when it comes to navigating between dimensions. This mod streamlines the process, saving you time and hassle.
  
 
-Whether you're exploring new realms, building intricate structures, or simply trying to navigate the vast Minecraft world, the Nether Portal Coord Mod is your indispensable companion for efficient travel and precise location tracking.
+Whether you're exploring new realms 🪄, building intricate structures, or simply trying to navigate the vast Minecraft world, the Nether Portal Coord Mod is your indispensable companion for efficient travel and precise location tracking.
 
  
 
